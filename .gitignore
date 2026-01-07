@@ -1,0 +1,7 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+
+# --- Results ---
+results/*
+!results/experiment_results.txt

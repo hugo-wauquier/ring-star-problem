@@ -1,1 +1,3 @@
-numpy
+# Aucune dépendance externe requise.
+# Le projet fonctionne avec la bibliothèque standard Python 3.
+# (Modules utilisés : copy, math, pathlib, random, time)

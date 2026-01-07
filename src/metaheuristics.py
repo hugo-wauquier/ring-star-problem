@@ -1,8 +1,7 @@
 import copy
+import math
 import random
 import time
-
-import numpy as np
 
 from functions import BestNeighbor, FindMin, IS_Iterate, TabuNeighbors
 
@@ -10,33 +9,56 @@ from functions import BestNeighbor, FindMin, IS_Iterate, TabuNeighbors
 # Recherche locale
 def LocalSearch(data, sol):
 
-    start = time.time()
-    # Temps total (Minutes * 60 secondes)
-    finaltime = 0.02 * 60
-
+    max_no_improve = 100
+    count_no_improve = 0
     bestsol = copy.deepcopy(sol)
-    while(time.time()-start < finaltime):
 
-        if len(sol[0]) > 3:
-            for _ in range(50):
-                x = random.randint(1,3)
-                sol = BestNeighbor(data, sol, x)
-                if sol[2] < bestsol[2]:
-                    bestsol = copy.deepcopy(sol)
-                    # print("LS :", bestsol[2])
-        sol = IS_Iterate(data, random.randint(1, 100))
+    if len(sol[0]) > 3:
+        while count_no_improve < max_no_improve:
+            x = random.choices([1, 2, 3], weights=[0.2, 0.5, 0.3])[0]
+            sol = BestNeighbor(data, sol, x)
+            if sol[2] < bestsol[2]:
+                bestsol = sol.copy()
+                # print("[INFO] Best cost solution:", bestsol[2])
+                count_no_improve = 0
+            else:
+                count_no_improve += 1
+    
+    return bestsol
+
+
+# Itération de la recherche locale
+def LS_Iterate(data):
+
+    temp = float("inf")
+
+    # Temps total (Minutes * 60 secondes)
+    finaltime = 0.5 * 60
+    start = time.time()
+
+    while time.time() - start < finaltime:
+
+        sol = IS_Iterate(data, 10)
+        sol = LocalSearch(data, sol)
+        cost = sol[2]
+        if cost < temp:
+            temp = cost
+            bestsol = sol.copy()
 
     return bestsol
 
-# Recuit simulé
-def RecSim(data, sol):
-    
-    start = time.time()
-    # Temps total (Minutes * 60 secondes)
-    finaltime = 3 * 60
 
+# Recuit simulé
+def RecSim(data):
+
+    sol = IS_Iterate(data, 1000)
     bestsol = copy.deepcopy(sol)
-    while(time.time()-start < finaltime):
+
+    # Temps total (Minutes * 60 secondes)
+    finaltime = 0.5 * 60
+    start = time.time()
+
+    while time.time() - start < finaltime:
 
         T = random.randint(50, 300)
         Tf = random.random() * random.randint(1, 3)
@@ -45,7 +67,7 @@ def RecSim(data, sol):
 
             if len(sol[0]) > 3:
                 for _ in range(10):
-                    x = random.randint(1, 3)
+                    x = random.choices([1, 2, 3], weights=[0.2, 0.4, 0.4])[0]
                     newsol = BestNeighbor(data, sol, x)
                     delta = newsol[2] - sol[2]
                     if delta < 0:
@@ -53,79 +75,83 @@ def RecSim(data, sol):
                         if sol[2] < bestsol[2]:
                             bestsol = copy.deepcopy(sol)
                     else:
-                        p = np.exp(-delta/T)
+                        p = math.exp(-delta / T)
                         if random.random() < p:
                             sol = newsol.copy()
             T *= coeff
-        sol = IS_Iterate(data, 1).copy()
-        
-    return bestsol
+        sol = IS_Iterate(data, 100)
 
-def LS_Iterate(data):
+    return LocalSearch(data, bestsol)
 
-    start = time.time()
-    # Temps total (Minutes * 60 secondes)
-    finaltime = 0.1 * 60
-    
-    temp = float("inf")
-    while(time.time()-start < finaltime):
 
-        sol = IS_Iterate(data, 1)
-        sol = LocalSearch(data, sol)
-        cost = sol[2]
-        if cost < temp:
-            temp = cost
-            save = sol.copy()
-    
-    return save
-
+# Recherche tabou
 def TabuSearch(data):
 
-    start = time.time()
+    len_init = 50
+    len_max = 100
+    best_global_sol = IS_Iterate(data, 1000)
+
     # Temps total (Minutes * 60 secondes)
-    finaltime = 0.1 * 60
+    finaltime = 0.5 * 60
+    start = time.time()
 
-    while(time.time()-start < finaltime):
+    while time.time() - start < finaltime:
 
-        Lt_max = 100
-        lt_init = 50
+        initsol = IS_Iterate(data, 100)
         tabu = []
         Sol = []
-        initsol = IS_Iterate(data, 10)
-        if len(sol[0]) > 3:
-            x = random.randint(1, 3)
-            _, listsol = TabuNeighbors(data, initsol, x)
+
+        if len(initsol[0]) > 3:
+            x = random.choices([1, 2, 3], weights=[0.2, 0.4, 0.4])[0]
+            listsol = TabuNeighbors(data, initsol, x)
         else:
-            listsol = initsol.copy()
+            listsol = [copy.deepcopy(initsol)]
+
         times = 0
-        for _ in range(len(listsol)):
-            if times > lt_init:
-                break
-            bestsol, i = FindMin(listsol)
-            tabu.append(bestsol)
-            Sol.append(bestsol[2])
+        while listsol and times < len_init:
+
+            best_neighbor, i = FindMin(listsol)
+            tabu.append(best_neighbor)
+            Sol.append(best_neighbor[2])
             listsol.pop(i)
-        
-        while len(tabu) < Lt_max:
+            times += 1
+
+        while len(tabu) < len_max:
+
+            if time.time() - start > finaltime:
+                break
 
             newtabu = copy.deepcopy(tabu)
             s_cur, _ = FindMin(newtabu)
-            x = random.randint(1, 3)
-            _, listsol = TabuNeighbors(data, s_cur, x)
-            verif = []
-            for _ in range(len(listsol)):
-                bestsol, i = FindMin(listsol)
-                verif.append(bestsol)
-                listsol.pop(i)
-            
-            for s_cur in verif:
-                if Sol.count(s_cur[2]) == 0:
-                    tabu.append(s_cur)
-                    Sol.append(s_cur[2])
-                    break
-        
-            sol, _ = FindMin(tabu)
-            if (time.time()-start > finaltime):
+
+            # Si le ring est trop petit, on ne peut pas optimiser davantage
+            if len(s_cur[0]) < 3:
                 break
-    
-    return sol
+
+            x = random.choices([1, 2, 3], weights=[0.2, 0.4, 0.4])[0]
+            listsol = TabuNeighbors(data, s_cur, x)
+
+            # On trie les voisins (du meilleur au pire)
+            verif = []
+            while listsol:
+                b_sol, idx = FindMin(listsol)
+                verif.append(b_sol)
+                listsol.pop(idx)
+
+            found_new = False
+            for candidate in verif:
+                if candidate[2] not in Sol:  # Vérification simple sur le coût
+                    tabu.append(candidate)
+                    Sol.append(candidate[2])
+                    found_new = True
+                    break
+
+            if not found_new:
+                break
+
+        if tabu:
+            local_best, _ = FindMin(tabu)
+            if local_best[2] < best_global_sol[2]:
+                best_global_sol = copy.deepcopy(local_best)
+
+    return LocalSearch(data, best_global_sol)
