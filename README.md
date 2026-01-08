@@ -1,6 +1,8 @@
-# Optimisation du Problème Ring Star (RSP)
+# 🔗 Optimisation du Problème Ring Star (RSP)
 
-Ce projet universitaire implémente plusieurs **métaheuristiques** pour résoudre le problème du **Ring Star (RSP)**. L'objectif est de sélectionner un sous-ensemble de nœuds pour former un anneau (Ring) et de connecter les nœuds restants à cet anneau (Star) afin de minimiser le coût total des connexions.
+Ce projet universitaire implémente plusieurs **métaheuristiques** pour résoudre le problème du **Ring Star (RSP)**, un problème d'optimisation combinatoire classé **NP-difficile**.
+
+L'objectif est de sélectionner un sous-ensemble de nœuds pour former un anneau (Ring) et de connecter les nœuds restants à cet anneau (Star) afin de minimiser le coût total des connexions.
 
 ## 📋 Description du Projet
 
