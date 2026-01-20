@@ -1,0 +1,79 @@
+[build-system]
+requires = ["hatchling>=1.21.0"]
+build-backend = "hatchling.build"
+
+[project]
+name = "ring-star-problem"
+version = "0.2.0"
+description = "A Python package for solving the Ring Star Problem using metaheuristics."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { file = "LICENSE" }
+authors = [
+  { name = "Hugo Wauquier" },
+]
+
+keywords = [
+    "graph",
+    "metaheuristics",
+    "optimization",
+    "ring-star-problem"
+]
+
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Mathematics",
+]
+
+dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/hugo-wauquier/ring-star-problem"
+Repository = "https://github.com/hugo-wauquier/ring-star-problem"
+Issues = "https://github.com/hugo-wauquier/ring-star-problem/issues"
+Changelog = "https://github.com/hugo-wauquier/ring-star-problem/releases"
+
+[project.scripts]
+ring-star = "ring_star.main:main"
+
+[project.optional-dependencies]
+test = [
+    "pytest>=8.3.0",
+    "pytest-cov>=6.0.0",
+]
+lint = [
+    "mypy>=1.14.0",
+    "ruff>=0.9.0",
+]
+dev = [
+    "mypy>=1.14.0",
+    "pytest>=8.3.0",
+    "pytest-cov>=6.0.0",
+    "ruff>=0.9.0",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/ring_star"]
+
+[tool.ruff]
+line-length = 88
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "W", "F", "I", "B", "UP"]
+
+[tool.mypy]
+python_version = "3.10"
+strict = true
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+addopts = "-ra -q"
+testpaths = ["tests"]

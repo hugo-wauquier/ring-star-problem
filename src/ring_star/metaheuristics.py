@@ -1,9 +1,30 @@
+"""Métaheuristiques d'optimisation pour le problème Ring Star.
+
+Ce module regroupe les algorithmes de résolution en s'appuyant sur les
+opérateurs définis dans le module `functions`. Il implémente plusieurs
+stratégies de recherche locale et globale pour explorer l'espace des
+solutions et minimiser la fonction de coût. Les algorithmes inclus
+gèrent des critères d'arrêt basés sur le temps d'exécution et utilisent
+des mécanismes d'intensification et de diversification.
+
+Functions:
+    LocalSearch: Recherche locale stochastique appliquant itérativement
+        le meilleur mouvement d'un voisinage aléatoire.
+    LS_Iterate: Stratégie de redémarrage multiple (Multistart) lançant
+        la recherche locale sur plusieurs solutions initiales.
+    RecSim: Algorithme de recuit simulé (Simulated Annealing) utilisant
+        une température décroissante pour accepter temporairement des
+        solutions dégradantes et échapper aux optima locaux.
+    TabuSearch: Recherche tabou utilisant une mémoire à court terme
+        (liste taboue) pour éviter les cycles et forcer l'exploration.
+"""
+
 import copy
 import math
 import random
 import time
 
-from functions import BestNeighbor, FindMin, IS_Iterate, TabuNeighbors
+from ring_star.functions import BestNeighbor, FindMin, IS_Iterate, TabuNeighbors
 
 
 # Recherche locale
@@ -19,7 +40,7 @@ def LocalSearch(data, sol):
             sol = BestNeighbor(data, sol, x)
             if sol[2] < bestsol[2]:
                 bestsol = sol.copy()
-                # print("[INFO] Best cost solution:", bestsol[2])
+                # print(f"[INFO] Best cost solution: {bestsol[2]}")
                 count_no_improve = 0
             else:
                 count_no_improve += 1

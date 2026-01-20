@@ -1,7 +1,21 @@
-# --- Python ---
+# Python cache
 __pycache__/
 *.py[cod]
 
-# --- Results ---
+# Virtual environments
+.venv/
+venv/
+ENV/
+
+# Distribution / packaging
+*.egg-info/
+dist/
+build/
+
+# IDE settings
+.vscode/
+.idea/
+
+# Results
 results/*
 !results/experiment_results.txt

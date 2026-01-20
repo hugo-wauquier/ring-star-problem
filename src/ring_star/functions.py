@@ -1,3 +1,27 @@
+"""Gestion des données et opérateurs de voisinage pour le problème Ring Star.
+
+Ce module fournit l'ensemble des fonctions utilitaires nécessaires à la
+manipulation des solutions. Il prend en charge les entrées/sorties, la
+construction de solutions initiales, le calcul de la fonction objectif
+et la définition des opérateurs de voisinage utilisés par les
+algorithmes d'optimisation.
+
+Functions:
+    load_data: Charge les matrices de coûts depuis un fichier d'instance.
+    create_solution: Formate et écrit la solution finale dans un fichier.
+    CalculCost: Évalue le coût total (Ring + Stars) d'une solution.
+    OptimizedCost: Calcule le coût optimal d'insertion dans le Ring ou
+        d'affectation à une Star (fonction gloutonne).
+    InitSol: Génère une solution initiale valide (aléatoire ou gloutonne).
+    IS_Iterate: Génère plusieurs solutions initiales pour ne conserver
+        que la meilleure (stratégie de redémarrage).
+    BestNeighbor: Explore le voisinage (Inversion, Transposition,
+        Déplacement) pour trouver le meilleur mouvement améliorant.
+    TabuNeighbors: Génère la liste complète des voisins pour
+        l'algorithme de recherche tabou.
+    FindMin: Trouve la solution ayant le coût minimum dans une liste.
+"""
+
 import random
 
 
